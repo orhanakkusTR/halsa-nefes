@@ -60,3 +60,19 @@ npx expo lint                   # lint
 - Arka planda / kilit ekranında ses → v1'de yok; uygulama arka plana geçince seans duraklar, dönünce kaldığı yerden sürer
 - Nefes seansında duraklat/oynat kontrolü bilinçli olarak yok; ses seçimi ekran içi kaydırmalı karuselden yapılır
 - Veriler yalnızca cihazda (hesap yok); "Verileri Sıfırla" Profil'de
+
+## Güncellemeleri ekibe ulaştırma (EAS Update — OTA)
+
+Uygulama havadan güncellemeye hazır. Akış:
+
+1. **Bir kez:** Bu yapılandırmadan SONRA bir APK derleyip ekibe dağıtın
+   (`npx eas-cli build -p android --profile preview`). Bu APK güncelleyiciyi içerir.
+2. **Her kod/içerik değişikliğinde:**
+   ```bash
+   npx eas-cli update --branch preview --message "değişiklik özeti"
+   ```
+   Telefonlardaki uygulama sonraki açılışta güncellemeyi indirir; ikinci
+   açılışta yeni sürüm çalışır. Yeniden kurulum gerekmez.
+3. **Yeni APK ne zaman şart?** Yalnızca native değişikliklerde: SDK yükseltme,
+   yeni native modül, ikon/isim/izin değişikliği. (`versionCode` artırılıp
+   yeniden build alınır; OTA güncellemeler aynı `version` (1.0.0) için geçerlidir.)
