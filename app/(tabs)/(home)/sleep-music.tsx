@@ -4,7 +4,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { Header, Screen } from '@/components/ui';
 import { formatTrackDuration, sleepTracks } from '@/data/sleepMusic';
-import { pauseAmbient, playAmbient, resumeAmbient } from '@/lib/audio';
+import { playAmbient } from '@/lib/audio';
 import { useAppStore } from '@/store/appStore';
 import { colors, radii, spacing, type } from '@/theme';
 
@@ -16,13 +16,11 @@ export default function SleepMusicScreen() {
   const router = useRouter();
   const nowPlaying = useAppStore((s) => s.nowPlaying);
 
-  const toggle = (id: string) => {
-    if (nowPlaying?.soundId === id) {
-      if (nowPlaying.playing) pauseAmbient();
-      else resumeAmbient();
-    } else {
-      playAmbient(id);
-    }
+  // Parçaya (veya play rozetine) dokununca çalmaya başlar ve doğrudan
+  // Şimdi Çalıyor ekranı açılır; duraklatma kontrolü o ekranda.
+  const open = (id: string) => {
+    if (nowPlaying?.soundId !== id) playAmbient(id);
+    router.push('/(tabs)/(home)/now-playing');
   };
 
   return (
@@ -44,7 +42,7 @@ export default function SleepMusicScreen() {
           return (
             <Pressable
               key={t.id}
-              onPress={() => toggle(t.id)}
+              onPress={() => open(t.id)}
               style={[styles.trackCard, isActive && styles.trackCardActive]}
             >
               <LinearGradient colors={t.tile} style={styles.trackTile}>

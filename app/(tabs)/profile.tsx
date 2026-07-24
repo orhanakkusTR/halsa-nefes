@@ -38,7 +38,7 @@ export default function ProfileScreen() {
 
   return (
     <Screen>
-      <Text style={[type.h2, { textAlign: 'center', marginBottom: spacing(5) }]}>Profil</Text>
+      <Text style={[type.h2, styles.title]}>Profil</Text>
 
       <View style={styles.profileRow}>
         <View style={styles.avatar}>
@@ -112,6 +112,9 @@ export default function ProfileScreen() {
 }
 
 const styles = StyleSheet.create({
+  title: {
+    marginBottom: spacing(5),
+  },
   profileRow: {
     flexDirection: 'row',
     alignItems: 'center',
