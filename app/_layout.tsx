@@ -5,13 +5,13 @@ import {
   Inter_700Bold,
   useFonts,
 } from '@expo-google-fonts/inter';
-import { Stack } from 'expo-router';
+import { Stack, usePathname, useRouter } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import { Platform, View } from 'react-native';
 import { initNotifications } from '@/lib/notifications';
-import { hydrateStore } from '@/store/appStore';
+import { hydrateStore, useAppStore } from '@/store/appStore';
 import { colors } from '@/theme';
 
 SplashScreen.preventAutoHideAsync();
@@ -34,6 +34,23 @@ function useHideWebScrollbars() {
   }, []);
 }
 
+// İlk açılışta (onboardingDone=false) tüm rotalar tanıtıma yönlenir.
+// Hidrasyon beklenir; böylece ana ekran bir an bile parlamaz.
+function OnboardingGate() {
+  const hydrated = useAppStore((s) => s.hydrated);
+  const onboardingDone = useAppStore((s) => s.onboardingDone);
+  const pathname = usePathname();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (hydrated && !onboardingDone && pathname !== '/onboarding') {
+      router.replace('/onboarding');
+    }
+  }, [hydrated, onboardingDone, pathname, router]);
+
+  return null;
+}
+
 export default function RootLayout() {
   const [fontsLoaded] = useFonts({
     Inter_400Regular,
@@ -41,6 +58,7 @@ export default function RootLayout() {
     Inter_600SemiBold,
     Inter_700Bold,
   });
+  const hydrated = useAppStore((s) => s.hydrated);
 
   useHideWebScrollbars();
 
@@ -50,16 +68,17 @@ export default function RootLayout() {
   }, []);
 
   useEffect(() => {
-    if (fontsLoaded) SplashScreen.hideAsync();
-  }, [fontsLoaded]);
+    if (fontsLoaded && hydrated) SplashScreen.hideAsync();
+  }, [fontsLoaded, hydrated]);
 
-  if (!fontsLoaded) {
+  if (!fontsLoaded || !hydrated) {
     return <View style={{ flex: 1, backgroundColor: colors.bg }} />;
   }
 
   return (
     <>
       <StatusBar style="light" />
+      <OnboardingGate />
       <Stack
         screenOptions={{
           headerShown: false,

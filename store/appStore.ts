@@ -24,6 +24,8 @@ interface AppState {
   moodLog: MoodEntry[];
   journey: JourneyState;
   favoriteSoundIds: string[];
+  /** İlk açılış tanıtımı tamamlandı mı (persist edilir) */
+  onboardingDone: boolean;
   hydrated: boolean;
   /** Ambient playback UI state (not persisted) */
   nowPlaying?: NowPlaying;
@@ -40,6 +42,8 @@ interface AppState {
   toggleFavoriteSound: (soundId: string) => void;
   startJourney: () => void;
   updateSettings: (patch: Partial<Settings>) => void;
+  /** Tanıtımı bitirir ve profil ismini kaydeder */
+  completeOnboarding: (name: string) => void;
   resetAll: () => void;
   /** DEV: replace sessions wholesale (seed/demo) */
   replaceSessions: (sessions: SessionLog[]) => void;
@@ -61,6 +65,7 @@ const initialData = {
   moodLog: [] as MoodEntry[],
   journey: { completedDays: [] } as JourneyState,
   favoriteSoundIds: [] as string[],
+  onboardingDone: false,
 };
 
 let idSeq = 0;
@@ -124,6 +129,12 @@ export const useAppStore = create<AppState>()((set) => ({
 
   updateSettings: (patch) => set((state) => ({ settings: { ...state.settings, ...patch } })),
 
+  completeOnboarding: (name) =>
+    set((state) => ({
+      settings: { ...state.settings, name: name.trim() },
+      onboardingDone: true,
+    })),
+
   resetAll: () => set({ ...initialData, settings: { ...defaultSettings } }),
 
   replaceSessions: (sessions) => set({ sessions }),
@@ -132,10 +143,11 @@ export const useAppStore = create<AppState>()((set) => ({
 const STORAGE_KEY = 'halsa-store-v1';
 
 function persistNow() {
-  const { settings, sessions, moodLog, journey, favoriteSoundIds } = useAppStore.getState();
+  const { settings, sessions, moodLog, journey, favoriteSoundIds, onboardingDone } =
+    useAppStore.getState();
   return AsyncStorage.setItem(
     STORAGE_KEY,
-    JSON.stringify({ v: 1, settings, sessions, moodLog, journey, favoriteSoundIds })
+    JSON.stringify({ v: 1, settings, sessions, moodLog, journey, favoriteSoundIds, onboardingDone })
   ).catch(() => {});
 }
 
@@ -161,6 +173,7 @@ export async function hydrateStore() {
         moodLog: Array.isArray(data.moodLog) ? data.moodLog : [],
         journey: data.journey?.completedDays ? data.journey : { completedDays: [] },
         favoriteSoundIds: Array.isArray(data.favoriteSoundIds) ? data.favoriteSoundIds : [],
+        onboardingDone: data.onboardingDone === true,
       });
     }
   } catch {
