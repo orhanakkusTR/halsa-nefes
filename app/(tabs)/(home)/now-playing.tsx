@@ -27,10 +27,11 @@ import { useAppStore } from '@/store/appStore';
 import { colors, radii, spacing, type } from '@/theme';
 
 const TIMER_OPTIONS = [15, 30, 45, 60] as const;
-// Sabit (scroll'suz) düzen: disk küçük ekranda daralır, kartlar sıkışır
+// Sabit (scroll'suz) düzen: disk, diğer öğelerden artan alana göre ölçülür;
+// şerit ve kontroller asla sıkıştırılmaz (başlık/dakika üst üste binmez).
 const COMPACT_HEIGHT = 700;
 const ARTWORK_MAX = 216;
-const ARTWORK_COMPACT = 100;
+const ARTWORK_MIN = 88;
 const PLAY_BTN = 72;
 const PLAY_BTN_COMPACT = 56;
 const STRIP_GAP = spacing(3);
@@ -116,8 +117,9 @@ function TrackStrip({ activeId, compact }: { activeId?: string; compact: boolean
 
 export default function NowPlayingScreen() {
   const router = useRouter();
-  const { height } = useWindowDimensions();
+  const { width, height } = useWindowDimensions();
   const compact = height < COMPACT_HEIGHT;
+  const [artworkAreaH, setArtworkAreaH] = useState(0);
   const nowPlaying = useAppStore((s) => s.nowPlaying);
   const volume = useAppStore((s) => s.settings.volume);
   const favorites = useAppStore((s) => s.favoriteSoundIds);
@@ -152,7 +154,16 @@ export default function NowPlayingScreen() {
     ? Math.max(1, Math.ceil((sleepTimer.endsAt - Date.now()) / 60_000))
     : null;
 
-  const artworkSize = compact ? ARTWORK_COMPACT : ARTWORK_MAX;
+  // Disk çapı = alanın ölçülen yüksekliği ile ekran genişliğinden küçük olanı;
+  // alan henüz ölçülmediyse geçici mütevazı bir boyut kullanılır.
+  const artworkSize = Math.max(
+    ARTWORK_MIN,
+    Math.min(
+      ARTWORK_MAX,
+      width - spacing(10) * 2,
+      artworkAreaH > 0 ? artworkAreaH - spacing(2) : compact ? ARTWORK_MIN : spacing(40)
+    )
+  );
   const playSize = compact ? PLAY_BTN_COMPACT : PLAY_BTN;
 
   if (!track) {
@@ -195,7 +206,10 @@ export default function NowPlayingScreen() {
     >
       <View style={[styles.body, compact && styles.bodyCompact]}>
         {/* Glowing circular artwork — kalan alanı esnek doldurur */}
-        <View style={[styles.artworkArea, compact && styles.artworkAreaCompact]}>
+        <View
+          style={[styles.artworkArea, compact && styles.artworkAreaCompact]}
+          onLayout={(e) => setArtworkAreaH(e.nativeEvent.layout.height)}
+        >
           <View style={styles.artworkGlow}>
             <LinearGradient
               colors={track.tile}
@@ -213,7 +227,7 @@ export default function NowPlayingScreen() {
           </View>
         </View>
 
-        <View style={{ alignItems: 'center', gap: spacing(1) }}>
+        <View style={[styles.fixedBlock, { alignItems: 'center', gap: spacing(1) }]}>
           <Text style={type.h2} numberOfLines={1}>
             {track.title}
           </Text>
@@ -364,13 +378,20 @@ const styles = StyleSheet.create({
   bodyCompact: {
     gap: spacing(2),
   },
+  // Yalnızca disk alanı esner; diğer tüm bloklar flexShrink: 0 ile sabittir —
+  // içerik sıkışınca web'in şeridi ezmesi (yazıların üst üste binmesi) önlenir.
   artworkArea: {
-    flexShrink: 1,
+    flex: 1,
+    minHeight: ARTWORK_MIN,
+    alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: spacing(2),
   },
   artworkAreaCompact: {
     paddingVertical: 0,
+  },
+  fixedBlock: {
+    flexShrink: 0,
   },
   artworkGlow: {
     borderRadius: ARTWORK_MAX / 2,
@@ -392,6 +413,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignSelf: 'stretch',
     paddingHorizontal: spacing(4),
+    flexShrink: 0,
   },
   playBtn: {
     backgroundColor: colors.primary,
@@ -404,6 +426,7 @@ const styles = StyleSheet.create({
     gap: spacing(3),
     alignSelf: 'stretch',
     paddingHorizontal: spacing(2),
+    flexShrink: 0,
   },
   volumeSlider: {
     flex: 1,
@@ -423,6 +446,7 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
     padding: spacing(3),
     minHeight: spacing(17),
+    flexShrink: 0,
   },
   timerCardCompact: {
     padding: spacing(2.5),
@@ -472,6 +496,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     alignSelf: 'stretch',
+    flexShrink: 0,
   },
   seeAll: {
     color: colors.primary,
@@ -481,6 +506,7 @@ const styles = StyleSheet.create({
     alignSelf: 'stretch',
     marginHorizontal: -spacing(5),
     flexGrow: 0,
+    flexShrink: 0,
   },
   strip: {
     gap: STRIP_GAP,

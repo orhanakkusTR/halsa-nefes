@@ -16,14 +16,17 @@ import { moods } from '@/data/moods';
 import { activeJourneyDay, moodOfToday, useAppStore } from '@/store/appStore';
 import { colors, spacing, type } from '@/theme';
 
-// Scroll'suz ana sayfa: hero flex ile esner, kompakt cihazda sınırlar daralır
-const HERO_MIN = spacing(52);
+// Scroll'suz ana sayfa: hero flex ile esner, kompakt cihazda sınırlar daralır.
+// 375×812 ölçümü: bölümler (başlık→journey kartı altı) 540px + tab bar 63 +
+// alt dolgu 16 + hero-bölüm boşluğu 20 → hero payı = yükseklik − 639.
+// 780 altında bölümler de daraltılmazsa sığmaz → kompakt eşiği 780.
+const HERO_MIN = spacing(34);
 const HERO_MAX = spacing(80);
 const HERO_MIN_COMPACT = spacing(30);
 const HERO_MAX_COMPACT = spacing(64);
 const LOGO_WIDTH = 184;
 const LOGO_WIDTH_COMPACT = 120;
-const COMPACT_HEIGHT = 700;
+const COMPACT_HEIGHT = 780;
 
 export default function HomeScreen() {
   const router = useRouter();

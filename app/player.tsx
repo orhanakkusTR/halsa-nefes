@@ -171,14 +171,14 @@ export default function PlayerScreen() {
       />
 
       <View style={[styles.header, { paddingTop: insets.top + spacing(4) }]}>
-        <Pressable onPress={close} hitSlop={12} style={styles.iconBtn}>
+        <Pressable onPress={close} hitSlop={spacing(3)} style={styles.iconBtn}>
           <Ionicons name="close" size={24} color={colors.text} />
         </Pressable>
-        <Text style={[type.title, styles.headerTitle]} numberOfLines={1}>
-          {exercise.playerTitle}
-        </Text>
-        <View style={styles.iconBtn} />
       </View>
+      {/* Başlık bar satırının altında — diğer ekranların başlık bandıyla aynı hizada */}
+      <Text style={[type.title, styles.headerTitle]} numberOfLines={1}>
+        {exercise.playerTitle}
+      </Text>
 
       <View style={[styles.body, compact && { gap: spacing(4) }]}>
         {finished ? (
@@ -247,11 +247,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: spacing(4),
   },
-  headerTitle: { flex: 1, textAlign: 'center' },
+  headerTitle: {
+    textAlign: 'center',
+    alignSelf: 'stretch',
+    paddingHorizontal: spacing(5),
+    marginTop: spacing(2),
+  },
   iconBtn: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: spacing(10),
+    height: spacing(10),
+    borderRadius: spacing(5),
     alignItems: 'center',
     justifyContent: 'center',
   },
