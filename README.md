@@ -1,50 +1,62 @@
-# Welcome to your Expo app 👋
+# Hälsa Breathe
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Hälsa markası için uyku & nefes egzersizi mobil uygulaması. Expo (React Native) + TypeScript, **SDK 54**.
 
-## Get started
+Tasarım kaynağı: `../app-mockup.jpg` (10 ekranlık mockup) · Logolar: `../logos/`
 
-1. Install dependencies
-
-   ```bash
-   npm install
-   ```
-
-2. Start the app
-
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+## Çalıştırma
 
 ```bash
-npm run reset-project
+npm install
+npx expo start
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+- **Telefonda (asıl test):** Telefona App Store / Google Play'den **Expo Go** uygulamasını kur, bilgisayarla aynı Wi-Fi'dayken terminaldeki QR kodu okut. QR çalışmazsa `npx expo start --tunnel`.
+- **Tarayıcıda (hızlı önizleme):** `npx expo start` çalışırken `w` tuşu. (Bildirim, haptik ve sessiz-anahtar davranışı web'de çalışmaz.)
 
-## Learn more
+> Not: Proje SDK 54'e sabitlendi çünkü mağazadaki Expo Go şu an yalnızca SDK 54 çalıştırıyor (Tem 2026). Expo Go güncellenince `npx expo install expo@^57 --fix` ile yükseltilebilir.
 
-To learn more about developing your project with Expo, look at the following resources:
+## Yapı
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+```
+app/            expo-router rotaları (4 sekme + modallar)
+components/     UI primitifleri, nefes halkası, grafikler, gece göğü sahnesi
+data/           Egzersiz kataloğu, sesler, 30 günlük journey, rozetler, ruh halleri
+engine/         Nefes state machine (faz/döngü/pause — Date.now tabanlı, drift'siz)
+lib/            stats (saf fonksiyonlar + testler), audio singleton, bildirimler, tarih yardımcıları
+store/          zustand store + AsyncStorage kalıcılığı (elle yazılmış, SSR-güvenli)
+theme/          Renk/tipografi/spacing token'ları (mockup'tan örneklendi)
+assets/sounds/  9 ambiyans kaydı (proje sahibinin sağladığı WAV'lardan dönüştürüldü, CREDITS.md)
+assets/music/   3 uyku müziği (bağımsız çalma; ana sayfadaki "Uyku Müzikleri" ekranı)
+                Şimdi Çalıyor: mockup bazlı tasarım — parça değiştirme, tekrar, ses,
+                uyku zamanlayıcı (15/30/45/60 dk otomatik durdurma), kısa isimli müzik
+                kutucukları; müzik çalarken ana sayfada mini oynatıcı barı görünür
+```
 
-## Join the community
+## Ekibe APK dağıtımı (EAS Build)
 
-Join our community of developers creating universal apps.
+Yapılandırma hazır (`eas.json` preview profili APK üretir; paket adı `com.halsa.breathe`).
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+```bash
+npx eas-cli login          # expo.dev hesabıyla bir kez
+npx eas-cli build -p android --profile preview
+```
+
+Derleme Expo'nun bulutunda ~10-20 dk sürer; bitince verilen linkten .apk indirilir.
+Bu linki ekibe gönderin — Android'de "bilinmeyen kaynaklara izin ver" ile kurulur.
+Yeni sürümde aynı komut yeter (app.json `versionCode` artırılmalı).
+
+## Testler & kontroller
+
+```bash
+node --test lib/stats.test.ts   # seri/tarih/istatistik matematiği (14 test)
+npx tsc --noEmit                # tip kontrolü
+npx expo lint                   # lint
+```
+
+## Bilinçli v1 sınırları
+
+- Sağlık Uygulamaları (HealthKit/Health Connect) → "Yakında" (native modül, dev build ister)
+- Arka planda / kilit ekranında ses → v1'de yok; uygulama arka plana geçince seans duraklar, dönünce kaldığı yerden sürer
+- Nefes seansında duraklat/oynat kontrolü bilinçli olarak yok; ses seçimi ekran içi kaydırmalı karuselden yapılır
+- Veriler yalnızca cihazda (hesap yok); "Verileri Sıfırla" Profil'de
