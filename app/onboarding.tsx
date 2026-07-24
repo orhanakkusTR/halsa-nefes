@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   KeyboardAvoidingView,
   NativeScrollEvent,
@@ -15,33 +15,38 @@ import {
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
+import { useVideoPlayer, VideoView } from 'expo-video';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { HalsaLogo } from '@/components/HalsaLogo';
 import { Button } from '@/components/ui';
 import { useAppStore } from '@/store/appStore';
 import { colors, radii, spacing, type } from '@/theme';
 
-// İlk açılış tanıtımı: 3 kaydırmalı sayfa + isimle yerel profil oluşturma.
+// İlk açılış tanıtımı: video karşılama + 2 görsel sayfa + isimle profil.
+const WELCOME_VIDEO = require('@/assets/video/karsilama.mp4');
+
 const INTRO_PAGES = [
   {
-    // Özel Hälsa karşılama videosu hazır olunca bu sayfanın arka planı
-    // videoya dönecek (expo-video + yeni APK derlemesi gerektirir).
-    image: require('@/assets/images/home-hero.jpg'),
+    video: true,
+    image: null,
     title: "Hälsa Breathe'e hoş geldin",
-    body: 'Uyumadan önce nefes al: rehberli egzersizlerle zihnini yavaşlat, bedenini uykuya hazırla.',
-    brand: true,
+    body: 'Uyumadan önce nefes al, zihnini yavaşlat, güne dinlenmiş uyan.',
+    brand: 'none',
   },
   {
-    image: require('@/assets/images/now-playing-bg.jpg'),
-    title: 'Uyku müzikleri ve sesler',
-    body: 'Yağmur, dalga ve uyku müzikleriyle uykuya dal. Uyku zamanlayıcısı müziği senin yerine kapatır.',
-    brand: false,
+    video: false,
+    image: require('@/assets/images/home-hero.jpg'),
+    title: 'Uyumadan önce nefes al',
+    body: 'Rehberli nefes egzersizleri ve uyku müzikleriyle bedenini uykuya hazırla.',
+    brand: 'inline',
   },
   {
-    image: require('@/assets/images/journey-hero.jpg'),
+    video: false,
+    image: require('@/assets/images/onboarding-geyik.jpg'),
     title: 'Yolculuğunu takip et',
     body: '30 günlük uyku yolculuğu, seriler ve rozetlerle ilerlemeni gör.',
-    brand: false,
+    // Logo görselin ortasının biraz üstünde konumlanır
+    brand: 'float',
   },
 ] as const;
 
@@ -60,6 +65,34 @@ export default function OnboardingScreen() {
   const [page, setPage] = useState(0);
   const [name, setName] = useState(savedName);
 
+  // Karşılama videosu: sessiz, döngülü, otomatik başlar
+  const welcomePlayer = useVideoPlayer(WELCOME_VIDEO, (p) => {
+    p.loop = true;
+    p.muted = true;
+    p.play();
+  });
+
+  // Yalnızca 1. sayfadayken oynat. Web'de OYNAYAN video, tarayıcının
+  // scroll-snap'ini sürekli 1. sayfaya geri çektiği için (ölçülen davranış)
+  // sayfadan çıkınca DOM video elementi de doğrudan duraklatılır —
+  // player API'sinin duraklatması bu yarışa yetişemiyordu.
+  useEffect(() => {
+    const domVideos = () =>
+      Platform.OS === 'web' && typeof document !== 'undefined'
+        ? Array.from(document.querySelectorAll('video'))
+        : [];
+    if (page === 0) {
+      welcomePlayer.play();
+      domVideos().forEach((v) => {
+        const p = v.play();
+        if (p) p.catch(() => {});
+      });
+    } else {
+      welcomePlayer.pause();
+      domVideos().forEach((v) => v.pause());
+    }
+  }, [page, welcomePlayer]);
+
   const goTo = (idx: number) => {
     // Web'de scroll-snap, animasyonlu programatik kaydırmayı geri alabiliyor —
     // orada anlık kaydır; native'de animasyon kalsın.
@@ -67,7 +100,9 @@ export default function OnboardingScreen() {
     setPage(idx);
   };
 
-  const onSnap = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+  // Dot'lar kaydırmayla CANLI senkron: her scroll karesinde sayfa indeksi
+  // güncellenir (yalnızca bırakma anını dinlemek web'de geç kalıyordu).
+  const onScrollSync = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
     const idx = Math.round(e.nativeEvent.contentOffset.x / width);
     if (idx !== page) setPage(Math.max(0, Math.min(PAGE_COUNT - 1, idx)));
   };
@@ -96,20 +131,38 @@ export default function OnboardingScreen() {
         horizontal
         pagingEnabled
         showsHorizontalScrollIndicator={false}
-        onMomentumScrollEnd={onSnap}
-        onScrollEndDrag={onSnap}
+        onScroll={onScrollSync}
+        scrollEventThrottle={16}
+        onMomentumScrollEnd={onScrollSync}
+        onScrollEndDrag={onScrollSync}
         style={styles.flex}
       >
         {INTRO_PAGES.map((p) => (
           <View key={p.title} style={[styles.page, { width }]}>
-            <Image source={p.image} style={StyleSheet.absoluteFill} contentFit="cover" transition={300} />
+            {p.video ? (
+              <VideoView
+                player={welcomePlayer}
+                style={StyleSheet.absoluteFill}
+                contentFit="cover"
+                nativeControls={false}
+              />
+            ) : (
+              <Image source={p.image} style={StyleSheet.absoluteFill} contentFit="cover" transition={300} />
+            )}
             <LinearGradient
               colors={['rgba(11,18,32,0.35)', 'rgba(11,18,32,0.10)', colors.bg]}
               locations={[0, 0.45, 0.9]}
               style={StyleSheet.absoluteFill}
+              pointerEvents="none"
             />
+            {p.brand === 'float' ? (
+              <View style={styles.brandFloat} pointerEvents="none">
+                <HalsaLogo width={LOGO_WIDTH} />
+                <Text style={[type.brandCaps, styles.breathe]}>BREATHE</Text>
+              </View>
+            ) : null}
             <View style={styles.pageBody}>
-              {p.brand ? (
+              {p.brand === 'inline' ? (
                 <View style={styles.brand}>
                   <HalsaLogo width={LOGO_WIDTH} />
                   <Text style={[type.brandCaps, styles.breathe]}>BREATHE</Text>
@@ -182,6 +235,8 @@ const styles = StyleSheet.create({
   flex: { flex: 1 },
   page: {
     flex: 1,
+    // Web'de video elementi sayfadan taşıp scroll-snap'i bozabiliyor — kırp
+    overflow: 'hidden',
   },
   pageBody: {
     flex: 1,
@@ -195,6 +250,15 @@ const styles = StyleSheet.create({
     gap: spacing(5),
   },
   brand: {
+    alignItems: 'center',
+    gap: spacing(2),
+  },
+  // Logo, görselin ortasının biraz üstünde
+  brandFloat: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: '32%',
     alignItems: 'center',
     gap: spacing(2),
   },

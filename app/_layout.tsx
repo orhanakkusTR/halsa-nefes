@@ -24,7 +24,7 @@ function useHideWebScrollbars() {
     if (Platform.OS !== 'web' || typeof document === 'undefined') return;
     const style = document.createElement('style');
     style.textContent = `
-      * { scrollbar-width: none; -ms-overflow-style: none; }
+      * { scrollbar-width: none; -ms-overflow-style: none; overflow-anchor: none; }
       *::-webkit-scrollbar { display: none; width: 0; height: 0; }
     `;
     document.head.appendChild(style);
