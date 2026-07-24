@@ -23,7 +23,7 @@ import { useAppStore } from '@/store/appStore';
 import { colors, radii, spacing, type } from '@/theme';
 
 // İlk açılış tanıtımı: video karşılama + 2 görsel sayfa + isimle profil.
-const WELCOME_VIDEO = require('@/assets/video/karsilama.mp4');
+const WELCOME_VIDEO = require('@/assets/video/giris.mp4');
 
 const INTRO_PAGES = [
   {
@@ -72,25 +72,34 @@ export default function OnboardingScreen() {
     p.play();
   });
 
-  // Yalnızca 1. sayfadayken oynat. Web'de OYNAYAN video, tarayıcının
-  // scroll-snap'ini sürekli 1. sayfaya geri çektiği için (ölçülen davranış)
-  // sayfadan çıkınca DOM video elementi de doğrudan duraklatılır —
-  // player API'sinin duraklatması bu yarışa yetişemiyordu.
+  // Yalnızca 1. sayfadayken oynat. Web'de iki ayrı tuhaflık ölçüldü:
+  // (1) OYNAYAN video scroll-snap'i sürekli 1. sayfaya geri çekiyor —
+  //     sayfadan çıkınca DOM elementi de doğrudan duraklatılır;
+  // (2) expo-video, element hazır olurken oynatmayı düşürebiliyor
+  //     (video ~2 sn oynayıp duraklamış ölçüldü) — 1. sayfadayken kısa
+  //     aralıklı bir bekçi, duraklamış videoyu yeniden başlatır.
   useEffect(() => {
     const domVideos = () =>
       Platform.OS === 'web' && typeof document !== 'undefined'
         ? Array.from(document.querySelectorAll('video'))
         : [];
     if (page === 0) {
-      welcomePlayer.play();
-      domVideos().forEach((v) => {
-        const p = v.play();
-        if (p) p.catch(() => {});
-      });
-    } else {
-      welcomePlayer.pause();
-      domVideos().forEach((v) => v.pause());
+      const kick = () => {
+        welcomePlayer.play();
+        domVideos().forEach((v) => {
+          if (v.paused) {
+            const p = v.play();
+            if (p) p.catch(() => {});
+          }
+        });
+      };
+      kick();
+      const guard = setInterval(kick, 800);
+      return () => clearInterval(guard);
     }
+    welcomePlayer.pause();
+    domVideos().forEach((v) => v.pause());
+    return undefined;
   }, [page, welcomePlayer]);
 
   const goTo = (idx: number) => {
