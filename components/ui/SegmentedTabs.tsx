@@ -33,6 +33,7 @@ export function SegmentedTabs<T extends string>({
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
+        style={styles.scrollBleed}
         contentContainerStyle={styles.scrollRow}
       >
         {pills}
@@ -50,9 +51,15 @@ const styles = StyleSheet.create({
     borderRadius: radii.pill,
     padding: spacing(1),
   },
+  // Kaydırılabilir pill'ler Screen'in yatay dolgusunu taşarak ekran
+  // kenarına akar; kenarda sert kesilme olmaz.
+  scrollBleed: {
+    marginHorizontal: -spacing(5),
+  },
   scrollRow: {
     flexDirection: 'row',
     gap: spacing(2),
+    paddingHorizontal: spacing(5),
   },
   pill: {
     paddingHorizontal: spacing(4),
