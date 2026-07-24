@@ -13,7 +13,7 @@ import {
   totalMinutes,
 } from '@/lib/stats';
 import { useAppStore } from '@/store/appStore';
-import { colors, fonts, spacing, type } from '@/theme';
+import { colors, spacing, type } from '@/theme';
 
 export default function StatsScreen() {
   const sessions = useAppStore((s) => s.sessions);
@@ -34,7 +34,7 @@ export default function StatsScreen() {
     data.habit.length >= 2 && data.habit[data.habit.length - 1].pct >= data.habit[0].pct;
 
   return (
-    <Screen header={<Header title="İstatistikler" />}>
+    <Screen header={<Header title="İstatistikler" variant="large" />}>
       <View style={{ gap: spacing(4) }}>
         <View style={styles.row}>
           <Card style={styles.statCard}>
@@ -42,7 +42,7 @@ export default function StatsScreen() {
               <Text style={type.caption}>Toplam Nefes Süresi</Text>
               <IconBadge icon="time-outline" color={colors.primary} size={34} shape="circle" />
             </View>
-            <Text style={styles.big}>{formatMinutes(data.monthMinutes)}</Text>
+            <Text style={type.statValue}>{formatMinutes(data.monthMinutes)}</Text>
             <Text style={type.caption}>(Bu Ay)</Text>
           </Card>
           <Card style={styles.statCard}>
@@ -50,7 +50,7 @@ export default function StatsScreen() {
               <Text style={type.caption}>Tamamlanan Rutinler</Text>
               <IconBadge icon="calendar-outline" color={colors.sky} size={34} shape="circle" />
             </View>
-            <Text style={styles.big}>{data.monthDays} gün</Text>
+            <Text style={type.statValue}>{data.monthDays} gün</Text>
             <Text style={type.caption}>(Bu Ay)</Text>
           </Card>
         </View>
@@ -73,14 +73,14 @@ export default function StatsScreen() {
               <Text style={type.caption}>En Uzun Seri</Text>
               <Ionicons name="flame" size={22} color={colors.gold} />
             </View>
-            <Text style={styles.big}>{data.bestStreak} gün</Text>
+            <Text style={type.statValue}>{data.bestStreak} gün</Text>
           </Card>
           <Card style={styles.statCard}>
             <View style={styles.statTop}>
               <Text style={type.caption}>Toplam Rutin</Text>
               <Ionicons name="leaf" size={22} color={colors.teal} />
             </View>
-            <Text style={styles.big}>{data.totalSessions}</Text>
+            <Text style={type.statValue}>{data.totalSessions}</Text>
           </Card>
         </View>
       </View>
@@ -103,10 +103,5 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     gap: spacing(2),
     marginBottom: spacing(1),
-  },
-  big: {
-    fontFamily: fonts.bold,
-    fontSize: 22,
-    color: colors.text,
   },
 });

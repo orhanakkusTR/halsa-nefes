@@ -17,9 +17,9 @@ export default function BadgesScreen() {
   );
 
   return (
-    <Screen header={<Header title="Rozetler" leftIcon="back" safeTop={false} />}>
+    <Screen header={<Header title="Rozetler" leftIcon="back" variant="large" />}>
       <Stack.Screen options={{ presentation: 'modal' }} />
-      <Text style={[type.caption, { textAlign: 'center', marginBottom: spacing(5) }]}>
+      <Text style={[type.caption, { marginBottom: spacing(5) }]}>
         Düzenli pratikle rozetleri aç.
       </Text>
       <View style={styles.grid}>
@@ -42,12 +42,12 @@ export default function BadgesScreen() {
               {unlocked ? (
                 <View style={styles.stateChip}>
                   <Ionicons name="checkmark" size={12} color={colors.teal} />
-                  <Text style={[styles.stateText, { color: colors.teal }]}>Açıldı</Text>
+                  <Text style={[type.micro, { color: colors.teal }]}>Açıldı</Text>
                 </View>
               ) : (
                 <View style={styles.stateChip}>
                   <Ionicons name="lock-closed" size={11} color={colors.textMuted} />
-                  <Text style={styles.stateText}>Kilitli</Text>
+                  <Text style={type.micro}>Kilitli</Text>
                 </View>
               )}
             </Card>
@@ -74,11 +74,7 @@ const styles = StyleSheet.create({
   stateChip: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
+    gap: spacing(1),
     marginTop: spacing(1),
-  },
-  stateText: {
-    fontSize: 11,
-    color: colors.textMuted,
   },
 });

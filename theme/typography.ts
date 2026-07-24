@@ -57,6 +57,41 @@ export const type = {
     lineHeight: 14,
     color: colors.textMuted,
   } as TextStyle,
+  label: {
+    fontFamily: fonts.medium,
+    fontSize: 13,
+    lineHeight: 18,
+    color: colors.textSecondary,
+  } as TextStyle,
+  labelStrong: {
+    fontFamily: fonts.semiBold,
+    fontSize: 13,
+    lineHeight: 18,
+    color: colors.text,
+  } as TextStyle,
+  statValue: {
+    fontFamily: fonts.bold,
+    fontSize: 20,
+    lineHeight: 26,
+    color: colors.text,
+  } as TextStyle,
+  brandCaps: {
+    fontFamily: fonts.medium,
+    fontSize: 16,
+    lineHeight: 22,
+    letterSpacing: 8,
+    color: colors.text,
+  } as TextStyle,
+  emoji: {
+    fontSize: 28,
+    lineHeight: 34,
+  } as TextStyle,
+  input: {
+    fontFamily: fonts.medium,
+    fontSize: 16,
+    lineHeight: 22,
+    color: colors.text,
+  } as TextStyle,
   bigStat: {
     fontFamily: fonts.bold,
     fontSize: 34,

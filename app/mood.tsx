@@ -5,7 +5,7 @@ import { Button, Header, Screen } from '@/components/ui';
 import { moods, recommendationReason, recommendedExerciseId } from '@/data/moods';
 import type { MoodId } from '@/lib/model';
 import { useAppStore } from '@/store/appStore';
-import { colors, fonts, radii, spacing, type } from '@/theme';
+import { colors, radii, spacing, type } from '@/theme';
 
 export default function MoodScreen() {
   const router = useRouter();
@@ -23,7 +23,7 @@ export default function MoodScreen() {
   };
 
   return (
-    <Screen header={<Header title="Bugün nasıl hissediyorsun?" safeTop={false} />}>
+    <Screen header={<Header title="Bugün nasıl hissediyorsun?" variant="large" />}>
       <Stack.Screen options={{ presentation: 'modal' }} />
       <Text style={[type.caption, styles.subtitle]}>
         Sana en uygun nefes egzersizini önerelim.
@@ -38,7 +38,7 @@ export default function MoodScreen() {
               onPress={() => setSelected(m.id)}
               style={[styles.option, active && styles.optionActive]}
             >
-              <Text style={styles.emoji}>{m.emoji}</Text>
+              <Text style={type.emoji}>{m.emoji}</Text>
               <View style={{ flex: 1 }}>
                 <Text style={type.title}>{m.title}</Text>
                 <Text style={[type.caption, { marginTop: 2 }]}>{m.subtitle}</Text>
@@ -63,7 +63,6 @@ export default function MoodScreen() {
 
 const styles = StyleSheet.create({
   subtitle: {
-    textAlign: 'center',
     marginBottom: spacing(5),
   },
   option: {
@@ -79,10 +78,6 @@ const styles = StyleSheet.create({
   optionActive: {
     borderColor: 'rgba(139,149,246,0.65)',
     backgroundColor: colors.primarySoft,
-  },
-  emoji: {
-    fontSize: 28,
-    fontFamily: fonts.regular,
   },
   radio: {
     width: 22,

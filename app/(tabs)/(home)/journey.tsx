@@ -8,7 +8,7 @@ import { Card, Header, IconBadge, Screen } from '@/components/ui';
 import { exerciseById } from '@/data/exercises';
 import { journeyDay, JOURNEY_LENGTH } from '@/data/journey';
 import { activeJourneyDay, journeyDoneToday, useAppStore } from '@/store/appStore';
-import { colors, fonts, radii, spacing, type } from '@/theme';
+import { colors, radii, spacing, type } from '@/theme';
 
 export default function JourneyScreen() {
   const router = useRouter();
@@ -34,7 +34,7 @@ export default function JourneyScreen() {
   };
 
   return (
-    <Screen header={<Header title="Hälsa Sleep Journey" />}>
+    <Screen header={<Header title="Hälsa Sleep Journey" variant="large" />}>
       <View style={{ gap: spacing(5) }}>
         <View style={styles.hero}>
           <Image
@@ -85,7 +85,7 @@ export default function JourneyScreen() {
                   {doneToday ? (
                     <View style={styles.doneChip}>
                       <Ionicons name="checkmark" size={14} color={colors.teal} />
-                      <Text style={styles.doneChipText}>Bugün tamamlandı</Text>
+                      <Text style={[type.micro, styles.doneChipText]}>Bugün tamamlandı</Text>
                     </View>
                   ) : (
                     <Pressable onPress={startToday} hitSlop={8} style={styles.playBtn}>
@@ -98,7 +98,7 @@ export default function JourneyScreen() {
 
             {plan ? (
               <Card>
-                <Text style={[type.captionMedium, styles.whyLabel]}>Neden Bugün?</Text>
+                <Text style={[type.micro, styles.whyLabel]}>Neden Bugün?</Text>
                 <Text style={[type.body, { color: colors.textSecondary }]}>{plan.reason}</Text>
               </Card>
             ) : null}
@@ -150,14 +150,11 @@ const styles = StyleSheet.create({
     borderRadius: radii.pill,
   },
   doneChipText: {
-    fontFamily: fonts.medium,
-    fontSize: 11,
     color: colors.teal,
   },
   whyLabel: {
     textTransform: 'uppercase',
     letterSpacing: 1,
-    fontSize: 11,
     marginBottom: spacing(2),
   },
   doneCard: {

@@ -3,7 +3,7 @@ import { StyleSheet, Text, TextInput, View } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { Button, Header, Screen } from '@/components/ui';
 import { useAppStore } from '@/store/appStore';
-import { colors, fonts, radii, spacing, type } from '@/theme';
+import { colors, radii, spacing, type } from '@/theme';
 
 export default function EditNameScreen() {
   const router = useRouter();
@@ -17,7 +17,7 @@ export default function EditNameScreen() {
   };
 
   return (
-    <Screen header={<Header title="İsmini Düzenle" leftIcon="back" safeTop={false} />}>
+    <Screen header={<Header title="İsmini Düzenle" leftIcon="back" variant="large" />}>
       <Stack.Screen options={{ presentation: 'modal' }} />
       <View style={{ gap: spacing(5) }}>
         <Text style={type.caption}>
@@ -42,14 +42,12 @@ export default function EditNameScreen() {
 
 const styles = StyleSheet.create({
   input: {
+    ...type.input,
     backgroundColor: colors.surface,
     borderRadius: radii.md,
     borderWidth: 1,
     borderColor: colors.border,
     paddingHorizontal: spacing(4),
     paddingVertical: spacing(3.5),
-    fontFamily: fonts.medium,
-    fontSize: 16,
-    color: colors.text,
   },
 });

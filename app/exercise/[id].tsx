@@ -29,7 +29,7 @@ export default function ExerciseSetupScreen() {
 
   if (!exercise) {
     return (
-      <Screen header={<Header title="Egzersiz" safeTop={false} />}>
+      <Screen header={<Header title="Egzersiz" variant="large" />}>
         <Text style={type.body}>Egzersiz bulunamadı.</Text>
       </Screen>
     );
@@ -49,7 +49,7 @@ export default function ExerciseSetupScreen() {
     });
 
   return (
-    <Screen header={<Header title={exercise.title} safeTop={false} />}>
+    <Screen header={<Header title={exercise.title} variant="large" />}>
       <Stack.Screen options={{ presentation: 'modal' }} />
       <View style={{ gap: spacing(5) }}>
         <View style={styles.iconWrap}>

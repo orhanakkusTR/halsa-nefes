@@ -16,7 +16,7 @@ import {
   totalMinutes,
 } from '@/lib/stats';
 import { useAppStore } from '@/store/appStore';
-import { colors, fonts, spacing, type } from '@/theme';
+import { colors, radii, spacing, type } from '@/theme';
 
 const RANGE_LABEL: Record<Range, string> = {
   week: 'Bu Hafta',
@@ -48,12 +48,11 @@ export default function ProgressScreen() {
 
   return (
     <Screen>
-      <View style={styles.headerRow}>
-        <View style={{ width: 40 }} />
-        <Text style={[type.h2, { flex: 1, textAlign: 'center' }]}>İlerleme</Text>
+      <View style={styles.titleRow}>
+        <Text style={[type.h2, styles.titleText]}>İlerleme</Text>
         <Pressable
-          hitSlop={10}
-          style={styles.headerBtn}
+          hitSlop={spacing(2)}
+          style={styles.titleAction}
           onPress={() => router.push('/(tabs)/progress/stats')}
         >
           <Ionicons name="analytics-outline" size={22} color={colors.text} />
@@ -84,7 +83,7 @@ export default function ProgressScreen() {
                 />
                 <Text
                   style={[
-                    styles.deltaText,
+                    type.labelStrong,
                     { color: data.delta >= 0 ? colors.green : colors.coral },
                   ]}
                 >
@@ -107,24 +106,24 @@ export default function ProgressScreen() {
 
         <View style={styles.statRow}>
           <Card style={styles.statCard}>
-            <Text style={styles.statValue}>{data.days} Gün</Text>
-            <Text style={styles.statLabel}>Rutin Tamamlama</Text>
+            <Text style={type.statValue}>{data.days} Gün</Text>
+            <Text style={[type.micro, styles.statLabel]}>Rutin Tamamlama</Text>
           </Card>
           <Card style={styles.statCard}>
-            <Text style={styles.statValue}>{data.avg} dk</Text>
-            <Text style={styles.statLabel}>Ortalama Süre</Text>
+            <Text style={type.statValue}>{data.avg} dk</Text>
+            <Text style={[type.micro, styles.statLabel]}>Ortalama Süre</Text>
           </Card>
           <Card style={styles.statCard}>
-            <Text style={styles.statValue}>%{data.success}</Text>
-            <Text style={styles.statLabel}>Rutin Başarı</Text>
+            <Text style={type.statValue}>%{data.success}</Text>
+            <Text style={[type.micro, styles.statLabel]}>Rutin Başarı</Text>
           </Card>
         </View>
 
         <View style={{ gap: spacing(3) }}>
           <View style={styles.badgeHeader}>
             <Text style={type.title}>Rozetler</Text>
-            <Pressable hitSlop={8} onPress={() => router.push('/badges')}>
-              <Text style={styles.seeAll}>Tümünü Gör</Text>
+            <Pressable hitSlop={spacing(2)} onPress={() => router.push('/badges')}>
+              <Text style={[type.label, styles.seeAll]}>Tümünü Gör</Text>
             </Pressable>
           </View>
           <View style={styles.badgeRow}>
@@ -133,7 +132,7 @@ export default function ProgressScreen() {
               return (
                 <View key={b.id} style={[styles.badgeItem, !unlocked && { opacity: 0.35 }]}>
                   <IconBadge icon={b.icon} color={unlocked ? b.color : colors.textMuted} size={52} shape="circle" />
-                  <Text style={styles.badgeTitle}>{b.title}</Text>
+                  <Text style={[type.micro, styles.badgeTitle]}>{b.title}</Text>
                 </View>
               );
             })}
@@ -145,15 +144,19 @@ export default function ProgressScreen() {
 }
 
 const styles = StyleSheet.create({
-  headerRow: {
+  titleRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
     marginBottom: spacing(5),
   },
-  headerBtn: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+  titleText: {
+    flex: 1,
+  },
+  titleAction: {
+    width: spacing(10),
+    height: spacing(10),
+    borderRadius: spacing(5),
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -167,17 +170,13 @@ const styles = StyleSheet.create({
   deltaChip: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 2,
+    gap: spacing(0.5),
     backgroundColor: 'rgba(52,211,153,0.12)',
-    borderRadius: 999,
+    borderRadius: radii.pill,
     paddingHorizontal: spacing(2),
-    paddingVertical: 3,
+    paddingVertical: spacing(0.75),
   },
   deltaDown: { backgroundColor: 'rgba(240,142,125,0.12)' },
-  deltaText: {
-    fontFamily: fonts.semiBold,
-    fontSize: 12,
-  },
   emptyChart: {
     alignItems: 'center',
     gap: spacing(3),
@@ -190,18 +189,11 @@ const styles = StyleSheet.create({
   statCard: {
     flex: 1,
     alignItems: 'center',
-    gap: 3,
+    gap: spacing(0.75),
     paddingVertical: spacing(4),
     paddingHorizontal: spacing(2),
   },
-  statValue: {
-    fontFamily: fonts.bold,
-    fontSize: 18,
-    color: colors.text,
-  },
   statLabel: {
-    fontFamily: fonts.regular,
-    fontSize: 11,
     color: colors.textSecondary,
     textAlign: 'center',
   },
@@ -211,8 +203,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   seeAll: {
-    fontFamily: fonts.medium,
-    fontSize: 13,
     color: colors.primary,
   },
   badgeRow: {
@@ -222,11 +212,9 @@ const styles = StyleSheet.create({
   badgeItem: {
     alignItems: 'center',
     gap: spacing(2),
-    width: 72,
+    width: spacing(18),
   },
   badgeTitle: {
-    fontFamily: fonts.medium,
-    fontSize: 11,
     color: colors.textSecondary,
     textAlign: 'center',
   },

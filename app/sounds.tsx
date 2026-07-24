@@ -43,7 +43,7 @@ export default function SoundsScreen() {
   };
 
   return (
-    <Screen header={<Header title="Sesler" leftIcon="back" safeTop={false} />}>
+    <Screen header={<Header title="Sesler" leftIcon="back" variant="large" />}>
       <Stack.Screen options={{ presentation: 'modal' }} />
       <View style={{ gap: spacing(4) }}>
         <SegmentedTabs

@@ -5,7 +5,7 @@ import { colors, spacing, type } from '@/theme';
 
 export default function AboutScreen() {
   return (
-    <Screen header={<Header title="Hälsa Hakkında" />}>
+    <Screen header={<Header title="Hälsa Hakkında" variant="large" />}>
       <View style={{ gap: spacing(5) }}>
         <View style={styles.logoWrap}>
           <HalsaLogo width={150} />

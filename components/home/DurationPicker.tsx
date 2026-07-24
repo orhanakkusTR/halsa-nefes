@@ -9,9 +9,11 @@ interface Props {
   labels?: Record<number, string>;
   value: number;
   onChange: (minutes: number) => void;
+  /** Küçük ekranlarda alt etiketler gizlenir, dikey dolgu daralır */
+  compact?: boolean;
 }
 
-export function DurationPicker({ durations, labels, value, onChange }: Props) {
+export function DurationPicker({ durations, labels, value, onChange, compact }: Props) {
   return (
     <View style={styles.row}>
       {durations.map((min, i) => {
@@ -20,7 +22,7 @@ export function DurationPicker({ durations, labels, value, onChange }: Props) {
           <Pressable
             key={min}
             onPress={() => onChange(min)}
-            style={[styles.card, active && styles.active]}
+            style={[styles.card, compact && styles.cardCompact, active && styles.active]}
           >
             <Ionicons
               name={MOON_ICONS[Math.min(i, MOON_ICONS.length - 1)]}
@@ -28,7 +30,7 @@ export function DurationPicker({ durations, labels, value, onChange }: Props) {
               color={active ? colors.primary : colors.textSecondary}
             />
             <Text style={[styles.minutes, active && { color: colors.text }]}>{min} dk</Text>
-            {labels?.[min] ? <Text style={styles.label}>{labels[min]}</Text> : null}
+            {!compact && labels?.[min] ? <Text style={styles.label}>{labels[min]}</Text> : null}
           </Pressable>
         );
       })}
@@ -51,6 +53,9 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
     borderWidth: 1,
     borderColor: colors.border,
+  },
+  cardCompact: {
+    paddingVertical: spacing(2.5),
   },
   active: {
     borderColor: 'rgba(139,149,246,0.65)',

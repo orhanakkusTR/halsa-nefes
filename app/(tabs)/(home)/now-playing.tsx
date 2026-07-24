@@ -17,7 +17,7 @@ import {
 } from '@/lib/audio';
 import { siblingTrackIds, trackById } from '@/lib/tracks';
 import { useAppStore } from '@/store/appStore';
-import { colors, fonts, radii, spacing, type } from '@/theme';
+import { colors, radii, spacing, type } from '@/theme';
 
 const TIMER_OPTIONS = [15, 30, 45, 60] as const;
 
@@ -77,7 +77,7 @@ export default function NowPlayingScreen() {
   if (!track) {
     return (
       <Screen
-        header={<Header title="Şimdi Çalıyor" leftIcon="back" />}
+        header={<Header title="Şimdi Çalıyor" leftIcon="back" variant="large" />}
         background={<ScreenBackground />}
       >
         <View style={styles.emptyWrap}>
@@ -91,7 +91,7 @@ export default function NowPlayingScreen() {
                 <LinearGradient colors={t.tile} style={styles.gridIcon}>
                   <Ionicons name={t.icon} size={22} color="rgba(255,255,255,0.9)" />
                 </LinearGradient>
-                <Text style={styles.gridLabel}>{t.shortTitle}</Text>
+                <Text style={[type.label, styles.gridLabel]}>{t.shortTitle}</Text>
               </Pressable>
             ))}
           </View>
@@ -195,7 +195,7 @@ export default function NowPlayingScreen() {
                 : 'Müzik otomatik durmasın'}
             </Text>
           </View>
-          <Text style={styles.timerValue}>{sleepTimer ? `${sleepTimer.minutes} dk` : 'Kapalı'}</Text>
+          <Text style={[type.labelStrong, styles.timerValue]}>{sleepTimer ? `${sleepTimer.minutes} dk` : 'Kapalı'}</Text>
           <Ionicons
             name={timerOpen ? 'chevron-up' : 'chevron-down'}
             size={16}
@@ -211,7 +211,7 @@ export default function NowPlayingScreen() {
               }}
               style={[styles.timerChip, !sleepTimer && styles.timerChipActive]}
             >
-              <Text style={[styles.timerChipText, !sleepTimer && styles.timerChipTextActive]}>
+              <Text style={[type.label, styles.timerChipText, !sleepTimer && styles.timerChipTextActive]}>
                 Kapalı
               </Text>
             </Pressable>
@@ -226,7 +226,7 @@ export default function NowPlayingScreen() {
                   }}
                   style={[styles.timerChip, active && styles.timerChipActive]}
                 >
-                  <Text style={[styles.timerChipText, active && styles.timerChipTextActive]}>
+                  <Text style={[type.label, styles.timerChipText, active && styles.timerChipTextActive]}>
                     {m} dk
                   </Text>
                 </Pressable>
@@ -239,7 +239,7 @@ export default function NowPlayingScreen() {
         <View style={styles.gridHeader}>
           <Text style={type.title}>Uyku Müzikleri</Text>
           <Pressable hitSlop={8} onPress={() => router.push('/(tabs)/(home)/sleep-music')}>
-            <Text style={styles.seeAll}>Hepsini Gör</Text>
+            <Text style={[type.label, styles.seeAll]}>Hepsini Gör</Text>
           </Pressable>
         </View>
         <View style={styles.grid}>
@@ -254,10 +254,10 @@ export default function NowPlayingScreen() {
                 <LinearGradient colors={t.tile} style={styles.gridIcon}>
                   <Ionicons name={t.icon} size={22} color="rgba(255,255,255,0.9)" />
                 </LinearGradient>
-                <Text style={[styles.gridLabel, active && { color: colors.text }]}>
+                <Text style={[type.label, styles.gridLabel, active && { color: colors.text }]}>
                   {t.shortTitle}
                 </Text>
-                <Text style={styles.gridDuration}>{formatTrackDuration(t.durationSec)}</Text>
+                <Text style={[type.micro, styles.gridDuration]}>{formatTrackDuration(t.durationSec)}</Text>
               </Pressable>
             );
           })}
@@ -337,8 +337,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   timerValue: {
-    fontFamily: fonts.semiBold,
-    fontSize: 14,
     color: colors.text,
   },
   timerOptions: {
@@ -361,8 +359,6 @@ const styles = StyleSheet.create({
     borderColor: colors.primary,
   },
   timerChipText: {
-    fontFamily: fonts.medium,
-    fontSize: 13,
     color: colors.textSecondary,
   },
   timerChipTextActive: {
@@ -375,8 +371,6 @@ const styles = StyleSheet.create({
     alignSelf: 'stretch',
   },
   seeAll: {
-    fontFamily: fonts.medium,
-    fontSize: 13,
     color: colors.primary,
   },
   grid: {
@@ -407,14 +401,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   gridLabel: {
-    fontFamily: fonts.medium,
-    fontSize: 12,
     color: colors.textSecondary,
     textAlign: 'center',
   },
   gridDuration: {
-    fontFamily: fonts.regular,
-    fontSize: 10,
     color: colors.textMuted,
   },
 });

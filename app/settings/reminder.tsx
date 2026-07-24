@@ -5,7 +5,7 @@ import { Stack } from 'expo-router';
 import { Card, Header, Screen } from '@/components/ui';
 import { ReminderResult, syncReminder } from '@/lib/notifications';
 import { useAppStore } from '@/store/appStore';
-import { colors, fonts, radii, spacing, type } from '@/theme';
+import { colors, radii, spacing, type } from '@/theme';
 
 const pad2 = (n: number) => String(n).padStart(2, '0');
 
@@ -27,11 +27,11 @@ function Stepper({
     <View style={styles.stepperRow}>
       <Text style={type.body}>{label}</Text>
       <View style={styles.stepper}>
-        <Pressable onPress={() => change(-1)} hitSlop={8} style={styles.stepBtn}>
+        <Pressable onPress={() => change(-1)} hitSlop={spacing(2)} style={styles.stepBtn}>
           <Ionicons name="remove" size={20} color={colors.primary} />
         </Pressable>
-        <Text style={styles.stepValue}>{pad2(value)}</Text>
-        <Pressable onPress={() => change(1)} hitSlop={8} style={styles.stepBtn}>
+        <Text style={[type.statValue, styles.stepValue]}>{pad2(value)}</Text>
+        <Pressable onPress={() => change(1)} hitSlop={spacing(2)} style={styles.stepBtn}>
           <Ionicons name="add" size={20} color={colors.primary} />
         </Pressable>
       </View>
@@ -56,7 +56,7 @@ export default function ReminderScreen() {
   }, [settings.reminderEnabled, settings.reminderHour, settings.reminderMinute]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <Screen header={<Header title="Hatırlatıcı" leftIcon="back" safeTop={false} />}>
+    <Screen header={<Header title="Hatırlatıcı" leftIcon="back" variant="large" />}>
       <Stack.Screen options={{ presentation: 'modal' }} />
       <View style={{ gap: spacing(4) }}>
         <Card style={styles.toggleRow}>
@@ -78,7 +78,7 @@ export default function ReminderScreen() {
           <Card style={{ gap: spacing(4) }}>
             <View style={styles.timePreview}>
               <Ionicons name="alarm-outline" size={22} color={colors.primary} />
-              <Text style={styles.timeText}>
+              <Text style={type.statValue}>
                 Her gün {pad2(settings.reminderHour)}:{pad2(settings.reminderMinute)}
               </Text>
             </View>
@@ -129,11 +129,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: spacing(2),
   },
-  timeText: {
-    fontFamily: fonts.semiBold,
-    fontSize: 18,
-    color: colors.text,
-  },
   stepperRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -153,10 +148,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   stepValue: {
-    fontFamily: fonts.semiBold,
-    fontSize: 20,
-    color: colors.text,
-    minWidth: 36,
+    minWidth: spacing(9),
     textAlign: 'center',
   },
   warnCard: {

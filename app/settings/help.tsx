@@ -27,7 +27,7 @@ const FAQ = [
 
 export default function HelpScreen() {
   return (
-    <Screen header={<Header title="Yardım & Destek" />}>
+    <Screen header={<Header title="Yardım & Destek" variant="large" />}>
       <View style={{ gap: spacing(3) }}>
         {FAQ.map((item, i) => (
           <Card key={i}>

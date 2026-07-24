@@ -6,7 +6,7 @@ import { Header, Screen } from '@/components/ui';
 import { formatTrackDuration, sleepTracks } from '@/data/sleepMusic';
 import { pauseAmbient, playAmbient, resumeAmbient } from '@/lib/audio';
 import { useAppStore } from '@/store/appStore';
-import { colors, fonts, radii, spacing, type } from '@/theme';
+import { colors, radii, spacing, type } from '@/theme';
 
 // Soft-black stage for sleep music. A custom background image will land here
 // later — drop it in as an absolute <Image> under the gradient, player-bg style.
@@ -27,7 +27,7 @@ export default function SleepMusicScreen() {
 
   return (
     <Screen
-      header={<Header title="Uyku Müzikleri" leftIcon="back" />}
+      header={<Header title="Uyku Müzikleri" leftIcon="back" variant="large" />}
       style={{ backgroundColor: SOFT_BLACK }}
       background={
         <LinearGradient colors={['#141828', '#0D101B', SOFT_BLACK]} style={StyleSheet.absoluteFill} />
@@ -74,7 +74,7 @@ export default function SleepMusicScreen() {
           onPress={() => router.push('/(tabs)/(home)/now-playing')}
         >
           <Ionicons name="musical-notes" size={14} color={colors.primary} />
-          <Text style={styles.nowPlayingText}>Şimdi Çalıyor ekranını aç</Text>
+          <Text style={[type.label, styles.nowPlayingText]}>Şimdi Çalıyor ekranını aç</Text>
           <Ionicons name="chevron-forward" size={14} color={colors.textMuted} />
         </Pressable>
       ) : null}
@@ -84,7 +84,6 @@ export default function SleepMusicScreen() {
 
 const styles = StyleSheet.create({
   subtitle: {
-    textAlign: 'center',
     marginBottom: spacing(5),
   },
   trackCard: {
@@ -127,8 +126,6 @@ const styles = StyleSheet.create({
     paddingVertical: spacing(2),
   },
   nowPlayingText: {
-    fontFamily: fonts.medium,
-    fontSize: 13,
     color: colors.primary,
   },
 });
