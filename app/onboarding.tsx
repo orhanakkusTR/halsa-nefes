@@ -159,8 +159,10 @@ export default function OnboardingScreen() {
               <Image source={p.image} style={StyleSheet.absoluteFill} contentFit="cover" transition={300} />
             )}
             <LinearGradient
-              colors={['rgba(11,18,32,0.35)', 'rgba(11,18,32,0.10)', colors.bg]}
-              locations={[0, 0.45, 0.9]}
+              // Video/görsel olabildiğince doğal kalsın: üstte çok hafif,
+              // yalnızca metin bölgesine inerken koyulaşan perde
+              colors={['rgba(11,18,32,0.12)', 'rgba(11,18,32,0)', colors.bg]}
+              locations={[0, 0.5, 0.94]}
               style={StyleSheet.absoluteFill}
               pointerEvents="none"
             />
