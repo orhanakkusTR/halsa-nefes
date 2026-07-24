@@ -24,9 +24,11 @@ import { colors, radii, spacing, type } from '@/theme';
 // İlk açılış tanıtımı: 3 kaydırmalı sayfa + isimle yerel profil oluşturma.
 const INTRO_PAGES = [
   {
+    // Özel Hälsa karşılama videosu hazır olunca bu sayfanın arka planı
+    // videoya dönecek (expo-video + yeni APK derlemesi gerektirir).
     image: require('@/assets/images/home-hero.jpg'),
-    title: 'Uyumadan önce nefes al',
-    body: 'Rehberli nefes egzersizleriyle zihnini yavaşlat, bedenini uykuya hazırla.',
+    title: "Hälsa Breathe'e hoş geldin",
+    body: 'Uyumadan önce nefes al: rehberli egzersizlerle zihnini yavaşlat, bedenini uykuya hazırla.',
     brand: true,
   },
   {
