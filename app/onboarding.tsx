@@ -23,7 +23,7 @@ import { useAppStore } from '@/store/appStore';
 import { colors, radii, spacing, type } from '@/theme';
 
 // İlk açılış tanıtımı: video karşılama + 2 görsel sayfa + isimle profil.
-const WELCOME_VIDEO = require('@/assets/video/giris.mp4');
+const WELCOME_VIDEO = require('@/assets/video/video2.mp4');
 
 const INTRO_PAGES = [
   {
