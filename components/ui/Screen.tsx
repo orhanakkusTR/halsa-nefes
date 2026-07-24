@@ -31,7 +31,10 @@ export function Screen({
   contentStyle,
 }: Props) {
   const insets = useSafeAreaInsets();
-  const padTop = header ? spacing(1) : (safeTop ? insets.top : 0) + spacing(3);
+  // Başlıksız ekranlar (sekme kökleri): başlık, detay ekranlarındaki büyük
+  // başlıkla aynı dikey hizada başlar — bar satırı yüksekliği kadar boşluk
+  // (spacing(4) + spacing(9) ikon satırı + spacing(2) = spacing(15)).
+  const padTop = header ? spacing(1) : (safeTop ? insets.top : 0) + spacing(15);
 
   const inner = scroll ? (
     <ScrollView

@@ -170,7 +170,7 @@ export default function PlayerScreen() {
         pointerEvents="none"
       />
 
-      <View style={[styles.header, { paddingTop: insets.top + spacing(2) }]}>
+      <View style={[styles.header, { paddingTop: insets.top + spacing(4) }]}>
         <Pressable onPress={close} hitSlop={12} style={styles.iconBtn}>
           <Ionicons name="close" size={24} color={colors.text} />
         </Pressable>

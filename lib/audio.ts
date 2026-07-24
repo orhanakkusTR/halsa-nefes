@@ -25,6 +25,11 @@ function syncStore(playing: boolean) {
 /** Remove the player instance only — the sleep timer survives track switches */
 function teardownPlayer() {
   if (player) {
+    // Android: remove() tek başına çalan native AudioTrack'i durdurmuyor
+    // (iki ses üst üste biniyordu) — önce pause şart.
+    try {
+      player.pause();
+    } catch {}
     try {
       player.remove();
     } catch {}
@@ -45,19 +50,25 @@ export async function playAmbient(soundId: string) {
     return;
   }
 
-  teardownPlayer();
   try {
-    player = createAudioPlayer(track.file);
+    currentId = soundId;
+    if (player) {
+      // Parça değişimi replace() ile: player asla yeniden yaratılmaz.
+      // remove() + createAudioPlayer döngüsü Android'de eski sesi
+      // durdurmayıp yenisini üstüne bindiriyordu.
+      player.replace(track.file);
+    } else {
+      player = createAudioPlayer(track.file);
+      // Mirror the player's real state into the store (web autoplay may defer/block)
+      try {
+        player.addListener('playbackStatusUpdate', (status: { playing?: boolean }) => {
+          if (currentId) syncStore(!!status.playing);
+        });
+      } catch {}
+    }
     player.loop = useAppStore.getState().loopEnabled;
     player.volume = useAppStore.getState().settings.volume;
-    // Mirror the player's real state into the store (web autoplay may defer/block)
-    try {
-      player.addListener('playbackStatusUpdate', (status: { playing?: boolean }) => {
-        if (currentId === soundId) syncStore(!!status.playing);
-      });
-    } catch {}
     player.play();
-    currentId = soundId;
     // Only ambient sounds become the remembered breathing-session background;
     // sleep music must not leak into the session carousel.
     if (track.isAmbient) {
@@ -65,8 +76,7 @@ export async function playAmbient(soundId: string) {
     }
     syncStore(true);
   } catch {
-    player = null;
-    currentId = null;
+    teardownPlayer();
   }
 }
 

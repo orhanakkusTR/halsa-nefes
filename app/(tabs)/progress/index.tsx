@@ -107,15 +107,15 @@ export default function ProgressScreen() {
         <View style={styles.statRow}>
           <Card style={styles.statCard}>
             <Text style={type.statValue}>{data.days} Gün</Text>
-            <Text style={[type.micro, styles.statLabel]}>Rutin Tamamlama</Text>
+            <Text style={[type.micro, styles.statLabel]}>Rutin{'\n'}Tamamlama</Text>
           </Card>
           <Card style={styles.statCard}>
             <Text style={type.statValue}>{data.avg} dk</Text>
-            <Text style={[type.micro, styles.statLabel]}>Ortalama Süre</Text>
+            <Text style={[type.micro, styles.statLabel]}>Ortalama{'\n'}Süre</Text>
           </Card>
           <Card style={styles.statCard}>
             <Text style={type.statValue}>%{data.success}</Text>
-            <Text style={[type.micro, styles.statLabel]}>Rutin Başarı</Text>
+            <Text style={[type.micro, styles.statLabel]}>Rutin{'\n'}Başarı</Text>
           </Card>
         </View>
 

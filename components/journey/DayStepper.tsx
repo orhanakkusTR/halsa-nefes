@@ -28,6 +28,7 @@ export function DayStepper({ totalDays, completedDays, activeDay }: Props) {
       ref={scrollRef}
       horizontal
       showsHorizontalScrollIndicator={false}
+      style={styles.bleed}
       contentContainerStyle={styles.row}
     >
       {Array.from({ length: totalDays }, (_, i) => {
@@ -58,10 +59,15 @@ export function DayStepper({ totalDays, completedDays, activeDay }: Props) {
 }
 
 const styles = StyleSheet.create({
+  // Screen'in yatay dolgusunu (spacing(5)) taşarak şerit gerçek ekran
+  // kenarına akar; daireler kenarda kesilmek yerine kayarak kaybolur.
+  bleed: {
+    marginHorizontal: -spacing(5),
+  },
   row: {
     gap: GAP,
     paddingVertical: spacing(1),
-    paddingHorizontal: spacing(1),
+    paddingHorizontal: spacing(5),
   },
   item: { alignItems: 'center', gap: spacing(1) },
   circle: {

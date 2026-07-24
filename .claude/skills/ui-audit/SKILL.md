@@ -29,6 +29,10 @@ Uygulamada TEK başlık deseni vardır:
 
 **Tab kökü ekranları** (exercises, profile, progress, home):
 - Header bileşeni yok; ekranın en üstünde `type.h2` sola yaslı başlık + altında `type.caption` alt açıklama.
+- Başlık üst boşluğu: `Screen` başlıksız dalı `insets.top + spacing(15)` verir — böylece
+  tab kökü başlığı, detay ekranlarındaki büyük başlıkla (bar satırı spacing(4) +
+  spacing(9) + spacing(2)) AYNI dikey hizada başlar. Başlık status bara yapışmaz;
+  tüm ekranlarda başlık aynı yükseklikte durur.
 - Progress ekranındaki gibi ortalanmış/el yapımı başlık satırı YASAKTIR — varsa bu desene dönüştürülür.
 - Sağ üst aksiyon gerekiyorsa başlıkla aynı satırda, sağa yaslı ikon butonu olarak durur.
 
@@ -85,9 +89,12 @@ Denetimde ara: `<Header` kullanımı `title` prop'u ile bar içinde başlık gö
 
 ## 8. Bilinen borçlar (ilk denetimde öncelikli)
 
-- `Header` bileşenine `variant: 'large'` eklenmesi ve 12 detay ekranının geçirilmesi.
-- `progress/index.tsx` el yapımı başlık satırının tab-kökü desenine çevrilmesi.
-- Ana sayfanın `scroll={false}` + esnek düzene geçirilmesi.
-- Ekranlara dağılmış ~15 elle yazılmış `fontSize` değerinin `type` ölçeğine taşınması.
+Tamamlananlar: Header `variant: 'large'` + 12 detay ekranı geçişi; progress başlık
+satırının tab-kökü desenine çevrilmesi; ana sayfa `scroll={false}` esnek düzen;
+tab kökü başlıklarının detay büyük başlığıyla hizalanması (Screen padTop spacing(15)).
+
+Kalanlar:
+- `player.tsx`, `profile.tsx`, `(tabs)/_layout.tsx` içindeki elle yazılmış `fontSize` değerlerinin `type` ölçeğine taşınması.
 - `player.tsx` içindeki `430` sihirli sayısının isimlendirilmesi.
-- `Screen`'e tablet `maxWidth` desteği.
+- `Screen`'e tablet `maxWidth` desteği (`width > 600` → içerik `maxWidth: 480`).
+- Dokunma hedefi taraması (44×44 efektif alan denetimi).
