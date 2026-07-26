@@ -1,3 +1,4 @@
+import { AppState } from 'react-native';
 import { AudioPlayer, createAudioPlayer, setAudioModeAsync } from 'expo-audio';
 import { trackById } from '@/lib/tracks';
 import { useAppStore } from '@/store/appStore';
@@ -12,11 +13,36 @@ async function ensureAudioMode() {
   if (modeReady) return;
   modeReady = true;
   try {
-    await setAudioModeAsync({ playsInSilentMode: true });
+    // Ekran kapansa / uygulama arka plana düşse de uyku müziği çalmaya
+    // devam eder; müzik odağı diğer uygulamalardan devralınır.
+    await setAudioModeAsync({
+      playsInSilentMode: true,
+      shouldPlayInBackground: true,
+      interruptionMode: 'doNotMix',
+      interruptionModeAndroid: 'doNotMix',
+    });
   } catch {
     // web / unsupported: ignore
   }
 }
+
+/**
+ * Uyku zamanlayıcısı dolduysa müziği durdurur. Arka planda JS sayaçları
+ * kısılabildiği için tek başına setTimeout'a güvenilmez; bu kontrol ayrıca
+ * (1) çalma durumu güncellemelerinde ve (2) uygulama öne dönünce çalışır.
+ */
+function enforceSleepTimer(): boolean {
+  const st = useAppStore.getState().sleepTimer;
+  if (st && Date.now() >= st.endsAt) {
+    stopAmbient();
+    return true;
+  }
+  return false;
+}
+
+AppState.addEventListener('change', (state) => {
+  if (state === 'active') enforceSleepTimer();
+});
 
 function syncStore(playing: boolean) {
   useAppStore.getState().setNowPlaying(currentId ? { soundId: currentId, playing } : undefined);
@@ -62,6 +88,7 @@ export async function playAmbient(soundId: string) {
       // Mirror the player's real state into the store (web autoplay may defer/block)
       try {
         player.addListener('playbackStatusUpdate', (status: { playing?: boolean }) => {
+          if (enforceSleepTimer()) return;
           if (currentId) syncStore(!!status.playing);
         });
       } catch {}
